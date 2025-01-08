@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konum Belirleme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .location-info {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Konum Belirleme Sayfası</h1>
+    <div class="location-info">
+        <p>Mevcut Konum:</p>
+        <p>Enlem: <span id="latitude">-</span></p>
+        <p>Boylam: <span id="longitude">-</span></p>
+    </div>
+    <div>
+        <input type="text" id="zoneName" placeholder="Bölge Adı">
+        <input type="text" id="audioPath" placeholder="Ses Dosyası Yolu (örn: audio/bolge1.mp3)">
+        <button onclick="generateZoneCode()">Konum Kodunu Oluştur</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        let currentLat = null;
+        let currentLng = null;
+        let zoneCounter = 1;
+
+        // Mevcut konumu al
+        function getCurrentLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        currentLat = position.coords.latitude;
+                        currentLng = position.coords.longitude;
+                        
+                        document.getElementById('latitude').textContent = currentLat.toFixed(6);
+                        document.getElementById('longitude').textContent = currentLng.toFixed(6);
+                    },
+                    (error) => {
+                        alert("Konum alınamadı: " + error.message);
+                    }
+                );
+            } else {
+                alert("Tarayıcınız konum özelliğini desteklemiyor.");
+            }
+        }
+
+        // Konum kodunu oluştur
+        function generateZoneCode() {
+            if (!currentLat || !currentLng) {
+                alert("Lütfen önce konum alın!");
+                return;
+            }
+
+            const zoneName = document.getElementById('zoneName').value;
+            const audioPath = document.getElementById('audioPath').value;
+
+            if (!zoneName || !audioPath) {
+                alert("Lütfen bölge adı ve ses dosyası yolunu girin!");
+                return;
+            }
+
+            const zoneCode = `{ id: ${zoneCounter}, name: "${zoneName}", lat: ${currentLat}, lng: ${currentLng}, audioSrc: "${audioPath}" }`;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <p><strong>Oluşturulan Konum Kodu:</strong></p>
+                <code>${zoneCode}</code>
+                <p><small>Bu kodu app.js dosyasındaki zones dizisine ekleyebilirsiniz.</small></p>
+            `;
+
+            zoneCounter++;
+        }
+
+        // Sayfa yüklendiğinde konumu al
+        document.addEventListener('DOMContentLoaded', getCurrentLocation);
+    </script>
+</body>
+</html> 
