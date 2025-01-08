@@ -40,28 +40,48 @@ async function preloadAudio() {
         return new Promise((resolve, reject) => {
             const audio = new Audio();
             
+            // Yükleme başarılı
             audio.addEventListener('canplaythrough', () => {
+                console.log(`${zone.name} için ses dosyası yüklendi`);
                 audioElements[zone.id] = audio;
                 resolve();
             }, { once: true });
 
+            // Yükleme hatası
             audio.addEventListener('error', (e) => {
-                reject(new Error(`Ses dosyası yüklenemedi: ${zone.audioSrc}`));
+                console.error(`${zone.name} için ses dosyası yüklenemedi:`, e.target.error);
+                reject(new Error(`${zone.name} için ses dosyası yüklenemedi: ${zone.audioSrc}`));
             });
 
-            audio.src = zone.audioSrc;
-            audio.preload = 'auto';
+            // Zaman aşımı kontrolü
+            const timeout = setTimeout(() => {
+                reject(new Error(`${zone.name} için ses dosyası yükleme zaman aşımı`));
+            }, 10000); // 10 saniye zaman aşımı
+
+            audio.addEventListener('loadeddata', () => {
+                clearTimeout(timeout);
+            });
+
+            try {
+                audio.src = zone.audioSrc;
+                audio.preload = 'auto';
+                console.log(`${zone.name} için ses dosyası yükleme başladı:`, zone.audioSrc);
+            } catch (error) {
+                reject(new Error(`${zone.name} için ses dosyası başlatılamadı: ${error.message}`));
+            }
         });
     });
 
     try {
         // Tüm ses dosyalarının yüklenmesini bekle
         await Promise.all(audioLoadPromises);
+        console.log('Tüm ses dosyaları başarıyla yüklendi');
         document.getElementById('status').textContent = "Ses dosyaları hazır, konum bekleniyor...";
         return true;
     } catch (error) {
         console.error('Ses yükleme hatası:', error);
-        document.getElementById('status').textContent = "Ses dosyaları yüklenirken hata oluştu!";
+        document.getElementById('status').textContent = 
+            `Ses dosyaları yüklenirken hata oluştu: ${error.message}. Lütfen sayfayı yenileyin.`;
         return false;
     }
 }
@@ -95,11 +115,13 @@ function playZoneAudio(zoneId) {
 
 // Uygulama başlatma
 document.addEventListener('DOMContentLoaded', async () => {
-    // Önce ses dosyalarını yükle
+    // Konum takibini başlat
+    startLocationTracking();
+    
+    // Ses dosyalarını arka planda yükle
     const audioLoaded = await preloadAudio();
-    if (audioLoaded) {
-        // Sesler yüklendikten sonra konum takibini başlat
-        startLocationTracking();
+    if (!audioLoaded) {
+        console.warn('Ses dosyaları yüklenemedi, uygulama ses olmadan devam edecek');
     }
 });
 
