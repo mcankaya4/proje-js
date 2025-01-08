@@ -1,7 +1,8 @@
 // Gezi bölgelerinin tanımlanması
 const zones = [
-    { id: 1, name: "Bölge 1", lat: 38.735875, lng: 29.749155, audioSrc: "audio/bolge1.mp3" },
-    // Diğer bölgeleri buraya ekleyin
+    { id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, audioSrc: "audio/bolge1.mp3" },
+    { id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge2.mp3" },
+    { id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge3.mp3" },
 ];
 
 let currentAudio = null;
