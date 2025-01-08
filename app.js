@@ -7,6 +7,36 @@ const zones = [
 
 let currentAudio = null;
 let watchId = null;
+let map = null;
+let userMarker = null;
+let zoneCircles = [];
+
+// Haritayı başlat
+function initMap(lat, lng) {
+    map = L.map('map').setView([lat, lng], 18);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Kullanıcı konumu için marker
+    userMarker = L.marker([lat, lng]).addTo(map);
+
+    // Bölgeleri haritaya ekle
+    zones.forEach(zone => {
+        const circle = L.circle([zone.lat, zone.lng], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.3,
+            radius: 4 // 4 metre yarıçap
+        }).addTo(map);
+
+        const marker = L.marker([zone.lat, zone.lng])
+            .bindPopup(zone.name)
+            .addTo(map);
+
+        zoneCircles.push(circle);
+    });
+}
 
 // Ses çalma fonksiyonu
 function playZoneAudio(audioSrc) {
@@ -28,24 +58,16 @@ function stopCurrentAudio() {
 
 // İki nokta arasındaki mesafeyi hesaplama (metre cinsinden)
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371e3; // Dünya'nın yarıçapı (metre)
-    const φ1 = lat1 * Math.PI/180;
-    const φ2 = lat2 * Math.PI/180;
-    const Δφ = (lat2-lat1) * Math.PI/180;
-    const Δλ = (lon2-lon1) * Math.PI/180;
-
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-    return R * c;
+    return map.distance([lat1, lon1], [lat2, lon2]);
 }
 
 // Konum kontrolü ve ses çalma/durdurma mantığı
 function checkLocation(position) {
     const currentLat = position.coords.latitude;
     const currentLng = position.coords.longitude;
+    
+    // Kullanıcı konumunu güncelle
+    userMarker.setLatLng([currentLat, currentLng]);
     
     document.getElementById('latitude').textContent = currentLat.toFixed(6);
     document.getElementById('longitude').textContent = currentLng.toFixed(6);
@@ -55,7 +77,7 @@ function checkLocation(position) {
     for (const zone of zones) {
         const distance = calculateDistance(currentLat, currentLng, zone.lat, zone.lng);
         
-        if (distance <= 4) { // 4 metre yarıçap (2 metreden güncellendi)
+        if (distance <= 4) { // 4 metre yarıçap
             inZone = true;
             document.getElementById('zone-name').textContent = zone.name;
             document.getElementById('status').textContent = `${zone.name} içerisindesiniz`;
@@ -76,6 +98,18 @@ function startLocationTracking() {
     if ("geolocation" in navigator) {
         document.getElementById('status').textContent = "Konum takip ediliyor...";
         
+        // İlk konum alımı
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                initMap(position.coords.latitude, position.coords.longitude);
+                checkLocation(position);
+            },
+            (error) => {
+                document.getElementById('status').textContent = "Konum hatası: " + error.message;
+            }
+        );
+
+        // Sürekli konum takibi
         watchId = navigator.geolocation.watchPosition(
             checkLocation,
             (error) => {

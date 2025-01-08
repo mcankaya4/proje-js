@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesli Gezi Rehberi</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
     <div id="app">
         <h1>Sesli Gezi Rehberi</h1>
         <div id="status">Konum izni bekleniyor...</div>
+        <div id="map"></div>
         <div id="current-location">
             <p>Mevcut Konum:</p>
             <p>Enlem: <span id="latitude">-</span></p>
@@ -19,6 +22,8 @@
             <p>Bulunduğunuz Bölge: <span id="zone-name">-</span></p>
         </div>
     </div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="app.js"></script>
 </body>
 </html> 
