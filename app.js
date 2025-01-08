@@ -120,11 +120,37 @@ function initMap(lat, lng) {
 
     // Bölgeleri haritaya ekle
     zones.forEach(zone => {
+        // Daire oluştur
         const circle = L.circle([zone.lat, zone.lng], {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.3,
             radius: 5 // 5 metre yarıçap
+        }).addTo(map);
+
+        // Bölge numarası için özel icon
+        const numberIcon = L.divIcon({
+            html: `<div style="
+                color: white;
+                background-color: red;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 12px;
+            ">${zone.id}</div>`,
+            className: 'zone-number-icon',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
+        // Numarayı haritaya ekle
+        L.marker([zone.lat, zone.lng], {
+            icon: numberIcon,
+            interactive: false // Tıklamayı devre dışı bırak
         }).addTo(map);
 
         zoneCircles.push(circle);
