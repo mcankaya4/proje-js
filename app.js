@@ -1,30 +1,79 @@
 // Gezi bölgelerinin tanımlanması
 const zones = [
-    { id: 1, name: "Bölge 1", lat: 38.735948, lng: 29.749371, audioSrc: "audio/bolge11.mp3" },
-    //{ id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge22.mp3" },
-    //{ id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge33.mp3" },
+    { 
+        id: 1, 
+        name: "Bölge 1", 
+        lat: 38.736002, 
+        lng: 29.749615, 
+        audioSrc: "audio/bolge1.ogg"
+    },
+    { 
+        id: 2, 
+        name: "Bölge 2", 
+        lat: 38.736035, 
+        lng: 29.749325, 
+        audioSrc: "audio/bolge2.ogg"
+    },
+    { 
+        id: 3, 
+        name: "Bölge 3", 
+        lat: 38.735853, 
+        lng: 29.749367, 
+        audioSrc: "audio/bolge3.ogg"
+    }
 ];
 
-let currentAudio = null;
 let watchId = null;
 let map = null;
 let userMarker = null;
 let zoneCircles = [];
 let activeZoneId = null;
 let audioElements = {};
+let audioLoadPromises = [];
 
 // Ses dosyalarını önceden yükle
-function preloadAudio() {
-    zones.forEach(zone => {
-        const audio = new Audio();
-        audio.src = zone.audioSrc;
-        audio.preload = 'auto';
-        audioElements[zone.id] = audio;
+async function preloadAudio() {
+    document.getElementById('status').textContent = "Ses dosyaları yükleniyor...";
+
+    // Her bölge için ses yükleme promise'i oluştur
+    audioLoadPromises = zones.map(zone => {
+        return new Promise((resolve, reject) => {
+            const audio = new Audio();
+            
+            audio.addEventListener('canplaythrough', () => {
+                audioElements[zone.id] = audio;
+                resolve();
+            }, { once: true });
+
+            audio.addEventListener('error', (e) => {
+                reject(new Error(`Ses dosyası yüklenemedi: ${zone.audioSrc}`));
+            });
+
+            audio.src = zone.audioSrc;
+            audio.preload = 'auto';
+        });
     });
+
+    try {
+        // Tüm ses dosyalarının yüklenmesini bekle
+        await Promise.all(audioLoadPromises);
+        document.getElementById('status').textContent = "Ses dosyaları hazır, konum bekleniyor...";
+        return true;
+    } catch (error) {
+        console.error('Ses yükleme hatası:', error);
+        document.getElementById('status').textContent = "Ses dosyaları yüklenirken hata oluştu!";
+        return false;
+    }
 }
 
 // Ses çalma fonksiyonu
 function playZoneAudio(zoneId) {
+    // Eğer ses yüklü değilse çalma
+    if (!audioElements[zoneId]) {
+        console.log("Ses dosyası henüz hazır değil");
+        return;
+    }
+
     // Eğer aynı bölgedeyse ve ses zaten çalıyorsa, bir şey yapma
     if (activeZoneId === zoneId && !audioElements[zoneId].paused) {
         return;
@@ -44,14 +93,15 @@ function playZoneAudio(zoneId) {
     });
 }
 
-// Ses durdurma fonksiyonu
-function stopCurrentAudio() {
-    if (activeZoneId && audioElements[activeZoneId]) {
-        audioElements[activeZoneId].pause();
-        audioElements[activeZoneId].currentTime = 0;
+// Uygulama başlatma
+document.addEventListener('DOMContentLoaded', async () => {
+    // Önce ses dosyalarını yükle
+    const audioLoaded = await preloadAudio();
+    if (audioLoaded) {
+        // Sesler yüklendikten sonra konum takibini başlat
+        startLocationTracking();
     }
-    activeZoneId = null;
-}
+});
 
 // İki nokta arasındaki mesafeyi hesaplama (metre cinsinden)
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -146,8 +196,11 @@ function startLocationTracking() {
     }
 }
 
-// Uygulama başlatma
-document.addEventListener('DOMContentLoaded', () => {
-    preloadAudio(); // Ses dosyalarını önceden yükle
-    startLocationTracking();
-}); 
+// Ses durdurma fonksiyonu
+function stopCurrentAudio() {
+    if (activeZoneId && audioElements[activeZoneId]) {
+        audioElements[activeZoneId].pause();
+        audioElements[activeZoneId].currentTime = 0;
+    }
+    activeZoneId = null;
+} 
