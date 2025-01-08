@@ -28,4 +28,24 @@ body {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+#start-screen {
+    text-align: center;
+    padding: 20px;
+}
+
+#start-button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px 0;
+}
+
+#start-button:hover {
+    background-color: #45a049;
 } 

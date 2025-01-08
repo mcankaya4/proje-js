@@ -10,16 +10,23 @@
 </head>
 <body>
     <div id="app">
-        <h1>Sesli Gezi Rehberi</h1>
-        <div id="status">Konum izni bekleniyor...</div>
-        <div id="map"></div>
-        <div id="current-location">
-            <p>Mevcut Konum:</p>
-            <p>Enlem: <span id="latitude">-</span></p>
-            <p>Boylam: <span id="longitude">-</span></p>
+        <div id="start-screen">
+            <h1>Sesli Gezi Rehberi</h1>
+            <p>Sesli rehberi başlatmak için butona tıklayın</p>
+            <button id="start-button">Rehberi Başlat</button>
         </div>
-        <div id="current-zone">
-            <p>Bulunduğunuz Bölge: <span id="zone-name">-</span></p>
+        <div id="main-content" style="display: none;">
+            <h1>Sesli Gezi Rehberi</h1>
+            <div id="status">Konum izni bekleniyor...</div>
+            <div id="map"></div>
+            <div id="current-location">
+                <p>Mevcut Konum:</p>
+                <p>Enlem: <span id="latitude">-</span></p>
+                <p>Boylam: <span id="longitude">-</span></p>
+            </div>
+            <div id="current-zone">
+                <p>Bulunduğunuz Bölge: <span id="zone-name">-</span></p>
+            </div>
         </div>
     </div>
     <!-- Leaflet JS -->

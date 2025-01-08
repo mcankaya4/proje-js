@@ -114,15 +114,36 @@ function playZoneAudio(zoneId) {
 }
 
 // Uygulama başlatma
-document.addEventListener('DOMContentLoaded', async () => {
-    // Konum takibini başlat
-    startLocationTracking();
-    
-    // Ses dosyalarını arka planda yükle
-    const audioLoaded = await preloadAudio();
-    if (!audioLoaded) {
-        console.warn('Ses dosyaları yüklenemedi, uygulama ses olmadan devam edecek');
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('start-button');
+    const startScreen = document.getElementById('start-screen');
+    const mainContent = document.getElementById('main-content');
+
+    startButton.addEventListener('click', async () => {
+        // Ses için kullanıcı etkileşimini al
+        const audio = new Audio();
+        audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        
+        try {
+            await audio.play();
+            // Başlangıç ekranını gizle
+            startScreen.style.display = 'none';
+            // Ana içeriği göster
+            mainContent.style.display = 'block';
+            
+            // Konum takibini başlat
+            startLocationTracking();
+            
+            // Ses dosyalarını arka planda yükle
+            const audioLoaded = await preloadAudio();
+            if (!audioLoaded) {
+                console.warn('Ses dosyaları yüklenemedi, uygulama ses olmadan devam edecek');
+            }
+        } catch (error) {
+            console.error('Ses başlatma hatası:', error);
+            alert('Ses özelliğini etkinleştirmek için lütfen tekrar deneyin.');
+        }
+    });
 });
 
 // İki nokta arasındaki mesafeyi hesaplama (metre cinsinden)
