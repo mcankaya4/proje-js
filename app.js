@@ -29,10 +29,6 @@ function initMap(lat, lng) {
             radius: 4 // 4 metre yarıçap
         }).addTo(map);
 
-        const marker = L.marker([zone.lat, zone.lng])
-            .bindPopup(zone.name)
-            .addTo(map);
-
         zoneCircles.push(circle);
     });
 }
