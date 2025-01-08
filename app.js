@@ -1,8 +1,8 @@
 // Gezi bölgelerinin tanımlanması
 const zones = [
-    { id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, audioSrc: "audio/bolge1.mp3" },
-    { id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge2.mp3" },
-    { id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge3.mp3" },
+    { id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, audioSrc: "audio/bolge11.mp3" },
+    { id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge22.mp3" },
+    { id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge33.mp3" },
 ];
 
 let currentAudio = null;
@@ -35,13 +35,36 @@ function initMap(lat, lng) {
 }
 
 // Ses çalma fonksiyonu
-function playZoneAudio(audioSrc) {
+function playZoneAudio(audioSrc, zoneName) {
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
     }
-    currentAudio = new Audio(audioSrc);
-    currentAudio.play();
+
+    // Kullanıcıya bildirim göster
+    const playPrompt = confirm(`${zoneName} bölgesine girdiniz. Sesli anlatımı dinlemek için Tamam'a tıklayın.`);
+    
+    if (playPrompt) {
+        currentAudio = new Audio(audioSrc);
+        
+        // Ses yüklendiğinde çal
+        currentAudio.addEventListener('canplaythrough', () => {
+            const playPromise = currentAudio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Ses çalma hatası:", error);
+                    alert("Ses çalınamadı. Lütfen tekrar deneyin.");
+                });
+            }
+        });
+
+        // Hata durumunda
+        currentAudio.addEventListener('error', () => {
+            console.log("Ses dosyası yüklenemedi");
+            alert("Ses dosyası yüklenemedi. Lütfen tekrar deneyin.");
+        });
+    }
 }
 
 // Ses durdurma fonksiyonu
@@ -77,7 +100,7 @@ function checkLocation(position) {
             inZone = true;
             document.getElementById('zone-name').textContent = zone.name;
             document.getElementById('status').textContent = `${zone.name} içerisindesiniz`;
-            playZoneAudio(zone.audioSrc);
+            playZoneAudio(zone.audioSrc, zone.name);
             break;
         }
     }
