@@ -1,8 +1,8 @@
 // Gezi bölgelerinin tanımlanması
 const zones = [
-    { id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, audioSrc: "audio/bolge1.mp3" },
-    { id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge2.mp3" },
-    { id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge3.mp3" },
+    { id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, videoId: "TaTeZJib-MA" },
+    { id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, videoId: "EIrKMLa8z4U" },
+    { id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, videoId: "lu7-w6zZUNs" },
 ];
 
 let currentAudio = null;
@@ -10,6 +10,26 @@ let watchId = null;
 let map = null;
 let userMarker = null;
 let zoneCircles = [];
+let player = null;
+
+// YouTube Player API'sini başlat
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '0',
+        width: '0',
+        playerVars: {
+            'autoplay': 0,
+            'controls': 0
+        },
+        events: {
+            'onReady': onPlayerReady
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    // Player hazır
+}
 
 // Haritayı başlat
 function initMap(lat, lng) {
@@ -27,28 +47,25 @@ function initMap(lat, lng) {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.3,
-            radius: 4 // 4 metre yarıçap
+            radius: 5 // 5 metre yarıçap
         }).addTo(map);
 
         zoneCircles.push(circle);
     });
 }
 
-// Ses çalma fonksiyonu
-function playZoneAudio(audioSrc) {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
+// Video çalma fonksiyonu
+function playZoneVideo(videoId) {
+    if (player && player.loadVideoById) {
+        player.loadVideoById(videoId);
+        player.playVideo();
     }
-    currentAudio = new Audio(audioSrc);
-    currentAudio.play();
 }
 
-// Ses durdurma fonksiyonu
-function stopCurrentAudio() {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
+// Video durdurma fonksiyonu
+function stopCurrentVideo() {
+    if (player && player.stopVideo) {
+        player.stopVideo();
     }
 }
 
@@ -57,7 +74,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return map.distance([lat1, lon1], [lat2, lon2]);
 }
 
-// Konum kontrolü ve ses çalma/durdurma mantığı
+// Konum kontrolü ve video çalma/durdurma mantığı
 function checkLocation(position) {
     const currentLat = position.coords.latitude;
     const currentLng = position.coords.longitude;
@@ -73,11 +90,11 @@ function checkLocation(position) {
     for (const zone of zones) {
         const distance = calculateDistance(currentLat, currentLng, zone.lat, zone.lng);
         
-        if (distance <= 4) { // 4 metre yarıçap
+        if (distance <= 5) { // 5 metre yarıçap
             inZone = true;
             document.getElementById('zone-name').textContent = zone.name;
             document.getElementById('status').textContent = `${zone.name} içerisindesiniz`;
-            playZoneAudio(zone.audioSrc);
+            playZoneVideo(zone.videoId);
             break;
         }
     }
@@ -85,7 +102,7 @@ function checkLocation(position) {
     if (!inZone) {
         document.getElementById('zone-name').textContent = "Bölge dışında";
         document.getElementById('status').textContent = "Herhangi bir bölge içerisinde değilsiniz";
-        stopCurrentAudio();
+        stopCurrentVideo();
     }
 }
 
