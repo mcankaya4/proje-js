@@ -11,6 +11,7 @@ let watchId = null;
 let map = null;
 let userMarker = null;
 let zoneCircles = [];
+let activeZoneId = null; // Aktif bölge takibi için
 
 // Haritayı başlat
 function initMap(lat, lng) {
@@ -36,34 +37,33 @@ function initMap(lat, lng) {
 }
 
 // Ses çalma fonksiyonu
-function playZoneAudio(audioSrc, zoneName) {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
+function playZoneAudio(audioSrc, zone) {
+    // Eğer aynı bölgedeyse tekrar sorma
+    if (activeZoneId === zone.id) {
+        if (!currentAudio || currentAudio.paused) {
+            currentAudio = new Audio(audioSrc);
+            currentAudio.play().catch(error => {
+                console.log("Ses çalma hatası:", error);
+            });
+        }
+        return;
     }
 
-    // Kullanıcıya bildirim göster
-    const playPrompt = confirm(`${zoneName} bölgesine girdiniz. Sesli anlatımı dinlemek için Tamam'a tıklayın.`);
+    // Yeni bir bölgeye girildiğinde
+    const playPrompt = confirm(`${zone.name} bölgesine girdiniz. Sesli anlatımı dinlemek için Tamam'a tıklayın.`);
     
     if (playPrompt) {
-        currentAudio = new Audio(audioSrc);
+        activeZoneId = zone.id; // Aktif bölgeyi kaydet
         
-        // Ses yüklendiğinde çal
-        currentAudio.addEventListener('canplaythrough', () => {
-            const playPromise = currentAudio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Ses çalma hatası:", error);
-                    alert("Ses çalınamadı. Lütfen tekrar deneyin.");
-                });
-            }
-        });
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
 
-        // Hata durumunda
-        currentAudio.addEventListener('error', () => {
-            console.log("Ses dosyası yüklenemedi");
-            alert("Ses dosyası yüklenemedi. Lütfen tekrar deneyin.");
+        currentAudio = new Audio(audioSrc);
+        currentAudio.play().catch(error => {
+            console.log("Ses çalma hatası:", error);
+            alert("Ses çalınamadı. Lütfen tekrar deneyin.");
         });
     }
 }
@@ -74,6 +74,7 @@ function stopCurrentAudio() {
         currentAudio.pause();
         currentAudio.currentTime = 0;
     }
+    activeZoneId = null; // Bölgeden çıkınca aktif bölgeyi sıfırla
 }
 
 // İki nokta arasındaki mesafeyi hesaplama (metre cinsinden)
@@ -86,7 +87,6 @@ function checkLocation(position) {
     const currentLat = position.coords.latitude;
     const currentLng = position.coords.longitude;
     
-    // Kullanıcı konumunu güncelle
     userMarker.setLatLng([currentLat, currentLng]);
     
     document.getElementById('latitude').textContent = currentLat.toFixed(6);
@@ -97,11 +97,11 @@ function checkLocation(position) {
     for (const zone of zones) {
         const distance = calculateDistance(currentLat, currentLng, zone.lat, zone.lng);
         
-        if (distance <= 5) { // 5 metre yarıçap
+        if (distance <= 5) {
             inZone = true;
             document.getElementById('zone-name').textContent = zone.name;
             document.getElementById('status').textContent = `${zone.name} içerisindesiniz`;
-            playZoneAudio(zone.audioSrc, zone.name);
+            playZoneAudio(zone.audioSrc, zone);
             break;
         }
     }
