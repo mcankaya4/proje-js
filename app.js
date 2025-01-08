@@ -1,7 +1,7 @@
 // Gezi bölgelerinin tanımlanması
 const zones = [
-    { id: 1, name: "Bölge 1", lat: 41.0082, lng: 28.9784, audioSrc: "audio/bolge1.mp3" },
-    { id: 2, name: "Bölge 2", lat: 41.0085, lng: 28.9787, audioSrc: "audio/bolge2.mp3" },
+    { id: 1, name: "Bölge 1", lat: 38.7359394, lng: 29.749349, audioSrc: "audio/bolge1.mp3" },
+    { id: 2, name: "Bölge 2", lat: 38.7359429, lng: 29.7493175, audioSrc: "audio/bolge2.mp3" },
     // Diğer bölgeleri buraya ekleyin
 ];
 
@@ -84,7 +84,8 @@ function startLocationTracking() {
             {
                 enableHighAccuracy: true,
                 maximumAge: 0,
-                timeout: 5000
+                timeout: 5000,
+                secure: true
             }
         );
     } else {
