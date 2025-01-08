@@ -5,21 +5,21 @@ const zones = [
         name: "Bölge 1", 
         lat: 38.736002, 
         lng: 29.749615, 
-        audioSrc: "audio/bolge1.ogg"
+        audioSrc: "audio/bolge11.ogg"
     },
     { 
         id: 2, 
         name: "Bölge 2", 
         lat: 38.736035, 
         lng: 29.749325, 
-        audioSrc: "audio/bolge2.ogg"
+        audioSrc: "audio/bolge22.ogg"
     },
     { 
         id: 3, 
         name: "Bölge 3", 
         lat: 38.735853, 
         lng: 29.749367, 
-        audioSrc: "audio/bolge3.ogg"
+        audioSrc: "audio/bolge33.ogg"
     }
 ];
 
