@@ -55,7 +55,7 @@ function checkLocation(position) {
     for (const zone of zones) {
         const distance = calculateDistance(currentLat, currentLng, zone.lat, zone.lng);
         
-        if (distance <= 2) { // 2 metre yarıçap
+        if (distance <= 4) { // 4 metre yarıçap (2 metreden güncellendi)
             inZone = true;
             document.getElementById('zone-name').textContent = zone.name;
             document.getElementById('status').textContent = `${zone.name} içerisindesiniz`;
