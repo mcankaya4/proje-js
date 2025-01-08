@@ -1,8 +1,9 @@
 // Gezi bölgelerinin tanımlanması
 const zones = [
-    { id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, audioSrc: "audio/bolge11.mp3" },
-    { id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge22.mp3" },
-    { id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge33.mp3" },
+    { id: 1, name: "Bölge 1", lat: 38.735948, lng: 29.749371, audioSrc: "audio/bolge11.mp3" },
+    //{ id: 1, name: "Bölge 1", lat: 38.736002, lng: 29.749615, audioSrc: "audio/bolge11.mp3" },
+    //{ id: 2, name: "Bölge 2", lat: 38.736035, lng: 29.749325, audioSrc: "audio/bolge22.mp3" },
+    //{ id: 3, name: "Bölge 3", lat: 38.735853, lng: 29.749367, audioSrc: "audio/bolge33.mp3" },
 ];
 
 let currentAudio = null;
