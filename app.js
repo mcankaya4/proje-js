@@ -3,22 +3,22 @@ const zones = [
     { 
         id: 1, 
         name: "Bölge 1", 
-        lat: 38.736002, 
-        lng: 29.749615, 
+        lat: 38.734997, 
+        lng: 29.762248, 
         audioSrc: "audio/bolge11.mp3"
     },
     { 
         id: 2, 
         name: "Bölge 2", 
-        lat: 38.736035, 
-        lng: 29.749325, 
+        lat: 38.734783, 
+        lng: 29.762395, 
         audioSrc: "audio/bolge22.mp3"
     },
     { 
         id: 3, 
         name: "Bölge 3", 
-        lat: 38.735853, 
-        lng: 29.749367, 
+        lat: 38.734893, 
+        lng: 29.762602, 
         audioSrc: "audio/bolge33.mp3"
     }
 ];
