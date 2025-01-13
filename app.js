@@ -3,7 +3,7 @@ const zones = [
     { 
         id: 1, 
         name: "3 Paşa Heykeli", 
-        lat: 38.849290, 
+        lat: 38.843290, 
         lng: 29.959364, 
         audioSrc: "audio/bolge11.mp3"
     },
