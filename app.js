@@ -2,38 +2,38 @@
 const zones = [
     { 
         id: 1, 
-        name: "3 Paşa Heykeli", 
+        name: "3 Komutan Anıtı", 
         lat: 38.843290, 
         lng: 29.959364, 
-        audioSrc: "audio/bolge11.mp3"
+        audioSrc: "audio/bolge1.mp3"
     },
     { 
         id: 2, 
-        name: "Direnişçi Aile", 
+        name: "Milisler Anıtı", 
         lat: 38.843101, 
         lng: 29.959400, 
-        audioSrc: "audio/bolge22.mp3"
+        audioSrc: "audio/bolge2.mp3"
     },
     { 
         id: 3, 
         name: "Şehitlik", 
         lat: 38.843176, 
         lng: 29.959135, 
-        audioSrc: "audio/bolge33.mp3"
+        audioSrc: "audio/bolge3.mp3"
     },
     { 
         id: 4, 
         name: "Baba Oğul Anıtı", 
         lat: 38.843068, 
         lng: 29.958726, 
-        audioSrc: "audio/bolge33.mp3"
+        audioSrc: "audio/bolge4.mp3"
     },
     { 
         id: 5, 
         name: "Mechul Asker Anıtı", 
         lat: 38.843093, 
         lng: 29.958275, 
-        audioSrc: "audio/bolge33.mp3"
+        audioSrc: "audio/bolge5.mp3"
     }
 ];
 
